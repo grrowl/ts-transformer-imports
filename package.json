@@ -1,0 +1,47 @@
+{
+  "name": "ts-transformer-imports",
+  "version": "0.2.0",
+  "description": "Transform import paths in TypeScript",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grrowl/ts-transformer-imports.git"
+  },
+  "keywords": [
+    "TypeScript"
+  ],
+  "author": "grrowl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/grrowl/ts-transformer-imports/issues"
+  },
+  "files": [
+    "index.js",
+    "index.ts",
+    "transformer.js",
+    "transformer.ts"
+  ],
+  "homepage": "https://github.com/grrowl/ts-transformer-imports#readme",
+  "devDependencies": {
+    "@types/mocha": "^5.2.3",
+    "@types/node": "^10.3.5",
+    "@types/typescript": "^2.0.0",
+    "mocha": "^5.2.0",
+    "prettier": "^1.14.2",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "typescript": "^3.0.3"
+  },
+  "peerDependencies": {
+    "typescript": "^2.4.1"
+  },
+  "dependencies": {
+    "ts-simple-ast": "^15.1.0",
+    "tsconfig-extends": "^1.0.1",
+    "tsconfig-paths": "^3.6.0"
+  }
+}
