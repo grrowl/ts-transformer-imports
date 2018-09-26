@@ -1,5 +1,5 @@
 {
-  "name": "ts-transformer-imports",
+  "name": "@activepipe/ts-transformer-imports",
   "version": "0.2.0",
   "description": "Transform import paths in TypeScript",
   "main": "index.js",
