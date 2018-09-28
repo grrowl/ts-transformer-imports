@@ -1,5 +1,5 @@
 # ts-transformer-imports
-A TypeScript custom transformer which enables to obtain keys of given type.
+A TypeScript custom transformer which transforms absolute imports (from `baseUrl`) to relative ones. This means such packages can be published and used within other projects without manually setting up `paths` or relying on babel or tsconfig-paths/register.
 
 [![Build Status][travis-image]][travis-url]
 [![NPM version][npm-image]][npm-url]
@@ -7,6 +7,7 @@ A TypeScript custom transformer which enables to obtain keys of given type.
 
 ## Reasons why this exists
 
+* https://github.com/Microsoft/TypeScript/issues/5039
 * https://github.com/Microsoft/TypeScript/issues/15479
 * https://github.com/Microsoft/TypeScript/issues/16088
 * https://github.com/Microsoft/TypeScript/issues/10866
@@ -20,13 +21,15 @@ TypeScript >= 2.4.1
 
 ## How to use the custom transformer
 
+Unfortunately, TypeScript itself does not currently provide any easy way to use custom transformers (See https://github.com/Microsoft/TypeScript/issues/14419).
+The followings are the example usage of the custom transformer.
 
 ## ttypescript
 
 See [examples/ttypescript](examples/ttypescript) for detail.
 See [ttypescript's README](https://github.com/cevek/ttypescript/blob/master/README.md) for how to use this with module bundlers such as webpack or Rollup.
 
-```json
+```js
 // tsconfig.json
 {
   "compilerOptions": {
@@ -36,6 +39,32 @@ See [ttypescript's README](https://github.com/cevek/ttypescript/blob/master/READ
     ]
   },
   // ...
+}
+```
+
+## TypeScript API
+
+<!-- See [test](test) for detail.
+You can try it with `$ npm test`. -->
+
+```js
+const ts = require('typescript');
+const importsTransformer = require('ts-transformer-imports').default;
+
+const program = ts.createProgram([/* your files to compile */], {
+  strict: true,
+  noEmitOnError: true,
+  target: ts.ScriptTarget.ES5
+});
+
+const transformers = {
+  before: [importsTransformer(program)],
+  after: []
+};
+const { emitSkipped, diagnostics } = program.emit(undefined, undefined, undefined, false, transformers);
+
+if (emitSkipped) {
+  throw new Error(diagnostics.map(diagnostic => diagnostic.messageText).join('\n'));
 }
 ```
 

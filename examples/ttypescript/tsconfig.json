@@ -4,8 +4,9 @@
     "noEmitOnError": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "ES5",
+    "baseUrl": "moduleDir",
     "plugins": [
-      { "transform": "ts-transformer-keys/transformer" }
+      { "transform": "ts-transformer-imports" }
     ]
   },
   "files": [

@@ -3,7 +3,7 @@
     "start": "ttsc"
   },
   "devDependencies": {
-    "ts-transformer-keys": "^0.3.1",
+    "ts-transformer-imports": "^0.2.0",
     "ttypescript": "^1.4.6"
   }
 }
