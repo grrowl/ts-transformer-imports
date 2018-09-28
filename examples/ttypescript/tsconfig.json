@@ -5,6 +5,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "target": "ES5",
     "baseUrl": "moduleDir",
+    "declaration": true,
     "plugins": [
       { "transform": "ts-transformer-imports" }
     ]

@@ -27,10 +27,8 @@
   ],
   "homepage": "https://github.com/grrowl/ts-transformer-imports#readme",
   "devDependencies": {
-    "@types/mocha": "^5.2.3",
     "@types/node": "^10.3.5",
     "@types/typescript": "^2.0.0",
-    "mocha": "^5.2.0",
     "prettier": "^1.14.2",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
@@ -40,7 +38,6 @@
     "typescript": "^2.4.1"
   },
   "dependencies": {
-    "ts-simple-ast": "^15.1.0",
     "tsconfig-extends": "^1.0.1",
     "tsconfig-paths": "^3.6.0"
   }

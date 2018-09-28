@@ -1,24 +1,22 @@
 import * as ts from 'typescript'
 
 import * as nodePath from 'path';
-import Project, { CompilerOptions, SourceFile } from 'ts-simple-ast';
 import * as tsconfig from 'tsconfig-extends';
 import { createMatchPath } from 'tsconfig-paths';
-// import { fileExistsSync, readJsonFromDiskSync } from 'tsconfig-paths/lib/filesystem';
 
 // use `tsconfig-extends` module cause it can recursively apply "extends" field
 const compilerOptions = tsconfig.load_file_sync('./tsconfig.json');
-const project = new Project({ compilerOptions })
 
 // ugly hack because passing TSCONFIG_PATH_EXTENSIONS to tsconfig-path doens't really work?
 require.extensions['.ts'] = require.extensions['.js']
 require.extensions['.tsx'] = require.extensions['.js']
 const TSCONFIG_PATH_EXTENSIONS = ['.ts', '.tsx']
 
-const absoluteBaseUrl = nodePath.join(process.cwd(), compilerOptions.baseUrl);
+const absoluteBaseUrl = nodePath.join(process.cwd(), compilerOptions.baseUrl || '.');
 const matchPathFunc = createMatchPath(absoluteBaseUrl, compilerOptions.paths || {});
 // force extra extensions onto matchPath
 // this doesn't resolve the supplied extensions, for some reason
+// import { fileExistsSync, readJsonFromDiskSync } from 'tsconfig-paths/lib/filesystem';
 // const matchPath = (value: string) => matchPathFunc(value, readJsonFromDiskSync, fileExistsSync, TSCONFIG_PATH_EXTENSIONS)
 
 const transform = (program: ts.Program) => transformerFactory

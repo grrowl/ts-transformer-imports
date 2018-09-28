@@ -12,7 +12,7 @@
   },
   "include": [
     "index.ts",
-    "transformer.ts",
+    "transformer.ts"
   ],
   "exclude": [
     "node_modules"
