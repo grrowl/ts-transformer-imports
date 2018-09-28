@@ -1,11 +1,13 @@
 # ts-transformer-imports
-A TypeScript custom transformer which transforms absolute imports (from `baseUrl`) to relative ones. This means such packages can be published and used within other projects without manually setting up `paths` or relying on babel or tsconfig-paths/register.
 
-[![Build Status][travis-image]][travis-url]
+A TypeScript transformer which enables transformation of absolute imports (using `baseUrl` or `paths`) to relative ones, so they can be required from other projects or regular ol' node.
+
+<!-- [![Build Status][travis-image]][travis-url] -->
 [![NPM version][npm-image]][npm-url]
 [![Downloads](https://img.shields.io/npm/dm/ts-transformer-imports.svg)](https://www.npmjs.com/package/ts-transformer-imports)
 
-## Reasons why this exists
+<!--
+## Why this exists / related issues
 
 * https://github.com/Microsoft/TypeScript/issues/5039
 * https://github.com/Microsoft/TypeScript/issues/15479
@@ -13,6 +15,7 @@ A TypeScript custom transformer which transforms absolute imports (from `baseUrl
 * https://github.com/Microsoft/TypeScript/issues/10866
 * https://github.com/Microsoft/TypeScript/issues/24599
 * https://stackoverflow.com/questions/50019789/how-to-compile-typescript-modules-with-baseurl-paths-settings-in-tsconfig
+-->
 
 # Requirement
 TypeScript >= 2.4.1
@@ -26,8 +29,7 @@ The followings are the example usage of the custom transformer.
 
 ## ttypescript
 
-See [examples/ttypescript](examples/ttypescript) for detail.
-See [ttypescript's README](https://github.com/cevek/ttypescript/blob/master/README.md) for how to use this with module bundlers such as webpack or Rollup.
+See [examples/ttypescript](examples/ttypescript) for detail, and [ttypescript's README](https://github.com/cevek/ttypescript/blob/master/README.md) for how to set up in your project.
 
 ```js
 // tsconfig.json
@@ -44,8 +46,8 @@ See [ttypescript's README](https://github.com/cevek/ttypescript/blob/master/READ
 
 ## TypeScript API
 
-<!-- See [test](test) for detail.
-You can try it with `$ npm test`. -->
+See [test](test) for detail.
+You can try it with `$ npm test`.
 
 ```js
 const ts = require('typescript');
@@ -58,8 +60,8 @@ const program = ts.createProgram([/* your files to compile */], {
 });
 
 const transformers = {
-  before: [importsTransformer(program)],
-  after: []
+  before: [],
+  after: [importsTransformer(program)]
 };
 const { emitSkipped, diagnostics } = program.emit(undefined, undefined, undefined, false, transformers);
 
