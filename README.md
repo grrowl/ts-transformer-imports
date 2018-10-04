@@ -17,6 +17,8 @@ A TypeScript transformer which enables transformation of absolute imports (using
 * https://stackoverflow.com/questions/50019789/how-to-compile-typescript-modules-with-baseurl-paths-settings-in-tsconfig
 -->
 
+[Read more about why this exists and what problem it solves](https://medium.com/@grrowl/fixing-absolute-imports-in-typescript-797f405176eb)
+
 # Requirement
 TypeScript >= 2.4.1
 
