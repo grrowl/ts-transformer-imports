@@ -1,6 +1,6 @@
 {
   "name": "ts-transformer-imports",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Transform import paths in TypeScript",
   "main": "index.js",
   "scripts": {
