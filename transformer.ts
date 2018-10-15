@@ -58,7 +58,7 @@ function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationCo
   }
 
   function isImportExportSpecifierRelative(node: ImportExportNode) {
-    if (node.moduleSpecifier) {
+    if (node.moduleSpecifier && node.moduleSpecifier.getSourceFile()) {
       return isPathRelative(getModuleSpecifierValue(node.moduleSpecifier))
     }
     return false
@@ -75,7 +75,7 @@ function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationCo
   }
 
   function relativizeImportExportNode(node: ImportExportNode, sourceFilePath: string) {
-    if (!node.moduleSpecifier) {
+    if (!node.moduleSpecifier || !node.moduleSpecifier.getSourceFile()) {
       return node
     }
 
