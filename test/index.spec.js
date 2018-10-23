@@ -1,7 +1,6 @@
 const assert = require('assert').strict
 
 const path = require('path')
-const fs = require('fs')
 
 const ts = require('typescript');
 const importsTransformer = require('../transformer').default;

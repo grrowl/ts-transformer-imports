@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "tslint",
-    "test": "npm run build && mocha test/index.spec.js"
+    "test": "npm run build && mocha --timeout 10000 test/index.spec.js"
   },
   "repository": {
     "type": "git",
