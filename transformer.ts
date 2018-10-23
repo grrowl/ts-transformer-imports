@@ -1,19 +1,13 @@
 import * as ts from 'typescript'
 
 import * as nodePath from 'path';
-import * as tsconfig from 'tsconfig-extends';
-import { createMatchPath } from 'tsconfig-paths';
-
-// use `tsconfig-extends` module cause it can recursively apply "extends" field
-const compilerOptions = tsconfig.load_file_sync('./tsconfig.json');
+import { createMatchPath, MatchPath } from 'tsconfig-paths';
 
 // ugly hack because passing TSCONFIG_PATH_EXTENSIONS to tsconfig-path doens't really work?
 require.extensions['.ts'] = require.extensions['.js']
 require.extensions['.tsx'] = require.extensions['.js']
 const TSCONFIG_PATH_EXTENSIONS = ['.ts', '.tsx']
 
-const absoluteBaseUrl = nodePath.join(process.cwd(), compilerOptions.baseUrl || '.');
-const matchPathFunc = createMatchPath(absoluteBaseUrl, compilerOptions.paths || {});
 // force extra extensions onto matchPath
 // this doesn't resolve the supplied extensions, for some reason
 // import { fileExistsSync, readJsonFromDiskSync } from 'tsconfig-paths/lib/filesystem';
@@ -21,13 +15,17 @@ const matchPathFunc = createMatchPath(absoluteBaseUrl, compilerOptions.paths || 
 
 const transform = (program: ts.Program) => transformerFactory
 
-const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context => {
-  return file => visitSourceFile(file, context) as ts.SourceFile;
-};
-
 type ImportExportNode = ts.ExportDeclaration | ts.ImportDeclaration
 
-function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext) {
+const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context => {
+  const compilerOptions = context.getCompilerOptions()
+  const absoluteBaseUrl = nodePath.join(process.cwd(), compilerOptions.baseUrl || '.');
+  const matchPathFunc = createMatchPath(absoluteBaseUrl, compilerOptions.paths || {});
+
+  return file => visitSourceFile(file, context, matchPathFunc) as ts.SourceFile;
+};
+
+function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, matchPathFunc: MatchPath) {
   return visitNodeAndChildren(sourceFile);
 
   function visitNodeAndChildren(node: ts.Node): ts.Node {
@@ -86,6 +84,7 @@ function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationCo
       const replacePath = nodePath.relative(sourceFilePath, matchedPath)
       // replace the module specifier
       node.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : `./${replacePath}`)
+    } else {
     }
 
     return node
