@@ -1,8 +1,8 @@
 # ts-transformer-imports
 
-A TypeScript transformer which enables transformation of absolute imports (using `baseUrl` or `paths`) to relative ones, so they can be required from other projects or regular ol' node.
+A TypeScript transformer which enables compilation of absolute imports (using `baseUrl` or `paths`) so they can be required as modules from Javascript or TypeScript, without additional configuration or path mapping.
 
-<!-- [![Build Status][travis-image]][travis-url] -->
+[![Build Status][travis-image]][travis-url]
 [![NPM version][npm-image]][npm-url]
 [![Downloads](https://img.shields.io/npm/dm/ts-transformer-imports.svg)](https://www.npmjs.com/package/ts-transformer-imports)
 
@@ -19,22 +19,23 @@ A TypeScript transformer which enables transformation of absolute imports (using
 
 [Read more about why this exists and what problem it solves](https://medium.com/@grrowl/fixing-absolute-imports-in-typescript-797f405176eb)
 
-# Requirement
-TypeScript >= 2.4.1
-
 # How to use this package
 
-## How to use the custom transformer
-
-Unfortunately, TypeScript itself does not currently provide any easy way to use custom transformers (See https://github.com/Microsoft/TypeScript/issues/14419).
-The followings are the example usage of the custom transformer.
+If you're using the TypeScript compiler and using TypeScript's native "absolute imports" mapping (specifying `baseUrl` or `paths` in your config), you've found none of the compiled code is usable in Javascript or unconfigured TypeScript.
 
 ## ttypescript
 
+First, install `ttypescript`:
+
+```
+npm install --save-dev ttypescript
+```
+
 See [examples/ttypescript](examples/ttypescript) for detail, and [ttypescript's README](https://github.com/cevek/ttypescript/blob/master/README.md) for how to set up in your project.
 
+Now, specify `ts-transfomer-imports` in your `tsconfig.json`:
+
 ```js
-// tsconfig.json
 {
   "compilerOptions": {
     // ...
@@ -42,14 +43,16 @@ See [examples/ttypescript](examples/ttypescript) for detail, and [ttypescript's 
       { "transform": "ts-transformer-imports" }
     ]
   },
-  // ...
 }
 ```
 
+## Using with `ts-node`, `webpack`, etc
+
+See [ttypescript's README](https://github.com/cevek/ttypescript/blob/master/README.md) for usage information with other compilers. It should work!
+
 ## TypeScript API
 
-See [test](test) for detail.
-You can try it with `$ npm test`.
+You probably won't need this. See [test](test) for more detail.
 
 ```js
 const ts = require('typescript');
@@ -62,15 +65,42 @@ const program = ts.createProgram([/* your files to compile */], {
 });
 
 const transformers = {
-  before: [],
-  after: [importsTransformer(program)]
+  before: [importsTransformer(program)]
 };
 const { emitSkipped, diagnostics } = program.emit(undefined, undefined, undefined, false, transformers);
-
-if (emitSkipped) {
-  throw new Error(diagnostics.map(diagnostic => diagnostic.messageText).join('\n'));
-}
 ```
+
+# TL;DR:
+
+I don't want to write:
+
+```js
+// ugh, annoying on bigger projects
+import isTruthy from '../../utils/isTruthy'
+```
+
+so [TypeScript allows me write](https://www.typescriptlang.org/docs/handbook/module-resolution.html#path-mapping):
+
+```js
+import isTruthy from 'isTruthy'
+```
+
+but `tsc` compiles it to:
+
+```js
+const isTruthy = require('isTruthy')
+// This makes NO SENSE to normal Javascript, or even downstream TypeScript!
+```
+
+So `ts-transformer-import` rewrites to this at compile time:
+
+```js
+const isTruthy = require('../../utils/isTruthy')
+```
+
+# Compatibility
+
+TypeScript >= 2.4.1
 
 # License
 
