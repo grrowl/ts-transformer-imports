@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "lint": "tslint"
+    "lint": "tslint",
+    "test": "npm run build && mocha test/index.spec.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@types/node": "^10.3.5",
     "@types/typescript": "^2.0.0",
+    "mocha": "^5.2.0",
     "prettier": "^1.14.2",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
@@ -38,7 +40,6 @@
     "typescript": "^2.4.1"
   },
   "dependencies": {
-    "tsconfig-extends": "^1.0.1",
     "tsconfig-paths": "^3.6.0"
   }
 }
