@@ -1,4 +1,4 @@
-const assert = require('assert').strict
+const assert = require('assert')
 
 const path = require('path')
 
@@ -31,6 +31,6 @@ describe('Resolves baseUrl', () => {
     }
     const { emitSkipped, diagnostics } = program.emit(undefined, callback, undefined, false, transformers);
 
-    assert.equal(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
+    assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
   })
 })
