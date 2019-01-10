@@ -19,7 +19,7 @@ type ImportExportNode = ts.ExportDeclaration | ts.ImportDeclaration
 
 const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context => {
   const compilerOptions = context.getCompilerOptions()
-  const absoluteBaseUrl = nodePath.join(process.cwd(), compilerOptions.baseUrl || '.');
+  const absoluteBaseUrl = compilerOptions.baseUrl && compilerOptions.baseUrl[0] === '/' ? compilerOptions.baseUrl : nodePath.join(process.cwd(), compilerOptions.baseUrl || '.');
   const matchPathFunc = createMatchPath(absoluteBaseUrl, compilerOptions.paths || {});
 
   return file => visitSourceFile(file, context, matchPathFunc) as ts.SourceFile;
