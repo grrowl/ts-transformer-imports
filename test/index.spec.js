@@ -34,3 +34,70 @@ describe('Resolves baseUrl', () => {
     assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
   })
 })
+
+
+describe('Resolves path', () => {
+  const COMPILE_OPTIONS = {
+    "strict": true,
+    "noEmitOnError": true,
+    "baseUrl": "test",
+    "paths": {
+      "aliased-path/*": ["baseDir/*"]
+    },
+    "declaration": true
+  }
+  const FILE = path.resolve(__dirname, 'aliased-path.ts')
+  const program = ts.createProgram([FILE], COMPILE_OPTIONS);
+
+  it('should transform named import', (done) => {
+    const callback = (filename, compiledSource) => {
+      if (filename.endsWith('aliased-path.js')) {
+        assert.ok(
+          compiledSource.match(/require\("\.\/baseDir\/isTruthy"\);/g),
+          'Correctly rewrites named import'
+        )
+        done()
+      }
+    }
+
+    const transformers = {
+      before: [importsTransformer(program)],
+    }
+    const { emitSkipped, diagnostics } = program.emit(undefined, callback, undefined, false, transformers);
+
+    assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
+  })
+})
+
+describe('Resolves multiple paths', () => {
+  const COMPILE_OPTIONS = {
+    "strict": true,
+    "noEmitOnError": true,
+    "baseUrl": "test",
+    "paths": {
+      "aliased-path/*": ["path-1/*", "baseDir/*"]
+    },
+    "declaration": true
+  }
+  const FILE = path.resolve(__dirname, 'aliased-path.ts')
+  const program = ts.createProgram([FILE], COMPILE_OPTIONS);
+
+  it('should transform named import', (done) => {
+    const callback = (filename, compiledSource) => {
+      if (filename.endsWith('aliased-path.js')) {
+        assert.ok(
+          compiledSource.match(/require\("\.\/baseDir\/isTruthy"\);/g),
+          'Correctly rewrites named import'
+        )
+        done()
+      }
+    }
+
+    const transformers = {
+      before: [importsTransformer(program)],
+    }
+    const { emitSkipped, diagnostics } = program.emit(undefined, callback, undefined, false, transformers);
+
+    assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
+  })
+})
