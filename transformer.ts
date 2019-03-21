@@ -1,4 +1,4 @@
-import { findImportLikeNodes, ImportKind , ImportLike, isLiteralTypeNode } from 'tsutils'
+import { findImportLikeNodes, ImportKind , ImportLike, isLiteralTypeNode, isTextualLiteral } from 'tsutils'
 import * as ts from 'typescript'
 
 import * as nodePath from 'path';
@@ -40,32 +40,48 @@ function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationCo
     // This is similar to tsutil's findImports, modified for our use case
     // https://github.com/ajafff/tsutils/blob/f14d5ad2edef34dbf38d08d579d7db4c33d2f55d/util/util.ts#L1131
     switch (node.kind) {
-      case ts.SyntaxKind.ImportDeclaration: { // node.moduleSpecifier
-          if (!node.moduleSpecifier.getText() || isModuleSpecifierRelative(node.moduleSpecifier)) {
-            return node
-          }
-
-          const specifierValue = getModuleSpecifierValue(node.moduleSpecifier)
-          const matchedPath = matchPathFunc(specifierValue)
-
+      case ts.SyntaxKind.ImportDeclaration:
+      case ts.SyntaxKind.ExportDeclaration:
+        // node.moduleSpecifier
+        if (isTextualLiteral(node.moduleSpecifier) && !isModuleSpecifierRelative(node.moduleSpecifier)) {
+          const matchedPath = matchPathFunc(getModuleSpecifierValue(node.moduleSpecifier))
           if (matchedPath) {
             node.moduleSpecifier = createRelativeLiteral(matchedPath)
           }
-          break;
-      }
+          return node
+        }
+        break;
       case ts.SyntaxKind.ImportEqualsDeclaration:
           // node.moduleReference.expression
-          break;
-      case ts.SyntaxKind.ExportDeclaration:
-          // node.moduleSpecifier
+          if (isTextualLiteral(node.moduleReference.expression) && !isModuleSpecifierRelative(node.moduleReference.expression)) {
+            const matchedPath = matchPathFunc(getModuleSpecifierValue(node.moduleReference.expression))
+            if (matchedPath) {
+              node.moduleReference.expression = createRelativeLiteral(matchedPath)
+            }
+            return node
+          }
           break;
       case ts.SyntaxKind.CallExpression:
           // node.arguments[0]
+          if (isTextualLiteral(node.arguments[0]) && !isModuleSpecifierRelative(node.arguments[0])) {
+            const matchedPath = matchPathFunc(getModuleSpecifierValue(node.arguments[0]))
+            if (matchedPath) {
+              node.arguments[0] = createRelativeLiteral(matchedPath)
+            }
+            return node
+          }
           break;
       case ts.SyntaxKind.ImportType:
-          // if (isLiteralTypeNode(node.argument)) {
-          //     // visitNode(node.argument.literal);
-          // }
+          // visitNode(node.argument.literal);
+          if (isLiteralTypeNode(node.argument)) {
+            if (isTextualLiteral(node.argument.literal) && !isModuleSpecifierRelative(node.argument.literal)) {
+              const matchedPath = matchPathFunc(getModuleSpecifierValue(node.argument.literal))
+              if (matchedPath) {
+                node.argument.literal = createRelativeLiteral(matchedPath)
+              }
+              return node
+            }
+          }
           break;
       default:
           throw new Error('Unexpected ImportLike node') as AssertNever<typeof node>;
@@ -79,7 +95,7 @@ function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationCo
   }
 
   function isModuleSpecifierRelative(moduleSpecifier: ts.Expression) {
-    if (moduleSpecifier && moduleSpecifier.getSourceFile()) {
+    if (moduleSpecifier && moduleSpecifier.getText()) {
       return isPathRelative(moduleSpecifier.getText())
     }
     return false
