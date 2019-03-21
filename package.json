@@ -35,12 +35,13 @@
     "prettier": "^1.14.2",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
-    "typescript": "^3.0.3"
+    "typescript": "^3.3.4000"
   },
   "peerDependencies": {
     "typescript": "^2.4.1"
   },
   "dependencies": {
-    "tsconfig-paths": "^3.6.0"
+    "tsconfig-paths": "^3.6.0",
+    "tsutils": "^3.9.1"
   }
 }
