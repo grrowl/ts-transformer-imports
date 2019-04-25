@@ -10,11 +10,6 @@
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "index.ts",
-    "transformer.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["index.ts", "transformer.ts"],
+  "exclude": ["node_modules"]
 }
