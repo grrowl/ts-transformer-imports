@@ -17,12 +17,24 @@ const transform = (program: ts.Program) => transformerFactory;
 
 type ImportExportNode = ts.ExportDeclaration | ts.ImportDeclaration;
 
+const shouldAddCurrentWorkingDirectoryPath = (
+  baseUrl: ts.CompilerOptions["baseUrl"]
+): boolean => {
+  if (!baseUrl) {
+    return true;
+  }
+  const worksOnUnix = baseUrl[0] === "/";
+  const worksOnWindows = new RegExp("^[A-Z]:/").test(baseUrl);
+  return !(worksOnUnix || worksOnWindows);
+};
+
 const transformerFactory: ts.TransformerFactory<ts.SourceFile> = context => {
   const compilerOptions = context.getCompilerOptions();
-  const absoluteBaseUrl =
-    compilerOptions.baseUrl && compilerOptions.baseUrl[0] === "/"
-      ? compilerOptions.baseUrl
-      : nodePath.join(process.cwd(), compilerOptions.baseUrl || ".");
+  const absoluteBaseUrl = shouldAddCurrentWorkingDirectoryPath(
+    compilerOptions.baseUrl
+  )
+    ? nodePath.join(process.cwd(), compilerOptions.baseUrl || ".")
+    : compilerOptions.baseUrl || ".";
   const matchPathFunc = createMatchPath(
     absoluteBaseUrl,
     compilerOptions.paths || {}
@@ -103,7 +115,9 @@ function visitSourceFile(
     const matchedPath = matchPathFunc(specifierValue);
 
     if (matchedPath) {
-      const replacePath = nodePath.relative(sourceFilePath, matchedPath);
+      const replacePath = nodePath
+        .relative(sourceFilePath, matchedPath)
+        .replace(/\\/g, "/");
       // replace the module specifier
       node.moduleSpecifier = ts.createLiteral(
         isPathRelative(replacePath) ? replacePath : `./${replacePath}`
