@@ -90,12 +90,12 @@ function visitSourceFile(
 
   function getModuleSpecifierValue(specifier: ts.Expression) {
     // it's hard, so we'll just assume leading width is the length of the trailing width
-    const value = specifier
-      .getText()
-      .substr(
-        specifier.getLeadingTriviaWidth(),
-        specifier.getWidth() - specifier.getLeadingTriviaWidth() * 2
-      );
+    const value = (
+      ((specifier as unknown) as { text: string }).text || ""
+    ).substr(
+      specifier.getLeadingTriviaWidth(),
+      specifier.getWidth() - specifier.getLeadingTriviaWidth() * 2
+    );
     return value;
   }
 
