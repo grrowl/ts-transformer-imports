@@ -122,7 +122,6 @@ function visitSourceFile(
       node.moduleSpecifier = ts.createLiteral(
         isPathRelative(replacePath) ? replacePath : `./${replacePath}`
       );
-    } else {
     }
 
     return node;
