@@ -113,18 +113,17 @@ function visitSourceFile(
 
     const specifierValue = getModuleSpecifierValue(node.moduleSpecifier);
     const matchedPath = matchPathFunc(specifierValue);
-
-    if (matchedPath) {
-      const replacePath = nodePath
-        .relative(sourceFilePath, matchedPath)
-        .replace(/\\/g, "/");
-      // replace the module specifier
-      node.moduleSpecifier = ts.createLiteral(
-        isPathRelative(replacePath) ? replacePath : `./${replacePath}`
-      );
+    if (!matchedPath) {
+      return node;
     }
 
-    return node;
+    const newNode = ts.getMutableClone(node);
+    const replacePath = nodePath
+      .relative(sourceFilePath, matchedPath)
+      .replace(/\\/g, "/");
+    // replace the module specifier
+    newNode.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : `./${replacePath}`);
+    return newNode;
   }
 }
 
