@@ -75,32 +75,50 @@ const { emitSkipped, diagnostics } = program.emit(undefined, undefined, undefine
 I don't want to write:
 
 ```js
-// ugh, annoying on bigger projects
+// within a deep directory, this can be tedious on large projects
 import isTruthy from '../../utils/isTruthy'
+import AppView from '../views/app'
 ```
 
 so [TypeScript allows me write](https://www.typescriptlang.org/docs/handbook/module-resolution.html#path-mapping):
 
 ```js
-import isTruthy from 'isTruthy'
+import isTruthy from 'utils/isTruthy'
+import AppView from 'views/app'
 ```
+
+when `tsconfig.json` looks like this:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "utils": ["./utils"],
+      "views": ["./components/views"],
+    }
+  }
+}
+```
+
 
 but `tsc` compiles it to:
 
 ```js
-const isTruthy = require('isTruthy')
-// This makes NO SENSE to normal Javascript, or even downstream TypeScript!
+const isTruthy = require('utils/isTruthy')
+// At runtime, node will try to resolve the "utils" module dependency from within node_modules and fail
 ```
 
-So `ts-transformer-import` rewrites to this at compile time:
+So `ts-transformer-import` transforms the emitted javascript this at typescript compile time:
 
 ```js
 const isTruthy = require('../../utils/isTruthy')
+const AppView = require('../views/app')
 ```
 
 # Compatibility
 
-TypeScript >= 2.4.1
+TypeScript 2.4 and up
 
 # License
 
@@ -113,6 +131,7 @@ MIT
 
 # Thanks to
 
+* Massive thanks to everyone who has contributed with pull requests and other submissions to this project.
 * https://gist.github.com/rifler/39fdcd92e78505bbc94dc5b9f845292b
 * https://github.com/kimamula/ts-transformer-keys
 * https://github.com/dsherret/ts-simple-ast
