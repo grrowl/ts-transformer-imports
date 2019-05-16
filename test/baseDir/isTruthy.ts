@@ -1,1 +1,3 @@
-export default (value: any) => !!value
+type MaybeTruthyValue = boolean | number | object
+
+export default (value: MaybeTruthyValue) => !!value

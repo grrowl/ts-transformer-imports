@@ -33,6 +33,26 @@ describe('Resolves baseUrl', () => {
 
     assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
   })
+
+  it('should transform named import in decalration', (done) => {
+    const callback = (filename, compiledSource) => {
+      if (filename.endsWith('named-base.d.ts')) {
+        console.log('>>>', filename, '\n', compiledSource)
+        assert.ok(
+          compiledSource.match(/require\("\.\/baseDir\/isTruthy"\);/g),
+          'Correctly rewrites named import in declaration'
+        )
+        done()
+      }
+    }
+
+    const transformers = {
+      before: [importsTransformer(program)],
+    }
+    const { emitSkipped, diagnostics } = program.emit(undefined, callback, undefined, false, transformers);
+
+    assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
+  })
 })
 
 
@@ -67,6 +87,26 @@ describe('Resolves path', () => {
 
     assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
   })
+
+  it('should transform named import in declaration', (done) => {
+    const callback = (filename, compiledSource) => {
+      if (filename.endsWith('aliased-path.d.ts')) {
+        console.log('>>>', filename, '\n', compiledSource)
+        assert.ok(
+          compiledSource.match(/require\("\.\/baseDir\/isTruthy"\);/g),
+          'Correctly rewrites named import in declaration'
+        )
+        done()
+      }
+    }
+
+    const transformers = {
+      before: [importsTransformer(program)],
+    }
+    const { emitSkipped, diagnostics } = program.emit(undefined, callback, undefined, false, transformers);
+
+    assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
+  })
 })
 
 describe('Resolves multiple paths', () => {
@@ -88,6 +128,26 @@ describe('Resolves multiple paths', () => {
         assert.ok(
           compiledSource.match(/require\("\.\/baseDir\/isTruthy"\);/g),
           'Correctly rewrites named import'
+        )
+        done()
+      }
+    }
+
+    const transformers = {
+      before: [importsTransformer(program)],
+    }
+    const { emitSkipped, diagnostics } = program.emit(undefined, callback, undefined, false, transformers);
+
+    assert.strictEqual(emitSkipped, false, diagnostics.map(diagnostic => diagnostic.messageText).join('\n'))
+  })
+
+  it('should transform named import in decalration', (done) => {
+    const callback = (filename, compiledSource) => {
+      if (filename.endsWith('aliased-path.d.ts')) {
+        console.log('>>>', filename, '\n', compiledSource)
+        assert.ok(
+          compiledSource.match(/require\("\.\/baseDir\/isTruthy"\);/g),
+          'Correctly rewrites named import in decalration'
         )
         done()
       }
