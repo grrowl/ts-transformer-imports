@@ -19,6 +19,12 @@ A TypeScript transformer which enables compilation of absolute imports (using `b
 
 [Read more about why this exists and what problem it solves](https://medium.com/@grrowl/fixing-absolute-imports-in-typescript-797f405176eb)
 
+# Depreciation notice
+
+Thankfully since releasing this module, other solutions have become which offer more features and do a better job. I recommend you check out [`@zerollup/ts-transform-paths`](https://github.com/zerkalica/zerollup/tree/master/packages/ts-transform-paths) — it works in the same way (as a typescript plugin / with ttypescript / at build time) but reliably covers more import/export types.
+
+---
+
 # How to use this package
 
 If you're using the TypeScript compiler and using TypeScript's native "absolute imports" mapping (specifying `baseUrl` or `paths` in your config), you've found none of the compiled code is usable in Javascript or unconfigured TypeScript.
